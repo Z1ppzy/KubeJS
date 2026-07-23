@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "kubejs:solar_lens",
+    "kubejs:photon_capacitor",
+    "kubejs:quantum_solar_matrix",
+    "kubejs:arcane_solar_core",
+    "kubejs:draconic_solar_core"
+  ]
+}

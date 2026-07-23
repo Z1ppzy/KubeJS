@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    { "id": "solarflux:sp_1", "required": false },
+    { "id": "solarflux:sp_2", "required": false },
+    { "id": "solarflux:sp_3", "required": false },
+    { "id": "solarflux:sp_4", "required": false },
+    { "id": "solarflux:sp_5", "required": false },
+    { "id": "solarflux:sp_6", "required": false },
+    { "id": "solarflux:sp_7", "required": false },
+    { "id": "solarflux:sp_8", "required": false }
+  ]
+}
