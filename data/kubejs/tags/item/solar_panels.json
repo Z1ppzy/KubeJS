@@ -8,6 +8,9 @@
     { "id": "solarflux:sp_5", "required": false },
     { "id": "solarflux:sp_6", "required": false },
     { "id": "solarflux:sp_7", "required": false },
-    { "id": "solarflux:sp_8", "required": false }
+    { "id": "solarflux:sp_8", "required": false },
+    { "id": "solarflux:sp_de.wyvern", "required": false },
+    { "id": "solarflux:sp_de.draconic", "required": false },
+    { "id": "solarflux:sp_de.chaotic", "required": false }
   ]
 }

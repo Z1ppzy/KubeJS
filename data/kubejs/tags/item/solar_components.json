@@ -5,6 +5,12 @@
     "kubejs:photon_capacitor",
     "kubejs:quantum_solar_matrix",
     "kubejs:arcane_solar_core",
-    "kubejs:draconic_solar_core"
+    "kubejs:draconic_solar_core",
+    { "id": "solarflux:photovoltaic_cell_1", "required": false },
+    { "id": "solarflux:photovoltaic_cell_2", "required": false },
+    { "id": "solarflux:photovoltaic_cell_3", "required": false },
+    { "id": "solarflux:photovoltaic_cell_4", "required": false },
+    { "id": "solarflux:photovoltaic_cell_5", "required": false },
+    { "id": "solarflux:photovoltaic_cell_6", "required": false }
   ]
 }
