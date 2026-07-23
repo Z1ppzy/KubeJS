@@ -19,9 +19,9 @@ ItemEvents.modifyTooltips(event => {
   ])
 
   event.add('kubejs:resonant_core', [
-    '§7Открывает ступени §bвыше 2x',
+    '§7Открывает ступени §bвыше 2x §7и §bгенерацию руды',
     '§8Нужен для: Purification Chamber (3x)',
-    '§8и всей цепочки выше неё'
+    '§8и всей цепочки выше неё, Ore Laser Base'
   ])
 
   // Метки на самих машинах — чтобы правило было видно с обеих сторон
@@ -30,7 +30,8 @@ ItemEvents.modifyTooltips(event => {
     'enderio:sag_mill': '§8Требует §7Механическое ядро',
     'oritech:pulverizer_block': '§8Требует §7Механическое ядро',
     'modern_industrialization:bronze_macerator': '§8Требует §7Механическое ядро',
-    'mekanism:purification_chamber': '§8Требует §7Резонансное ядро'
+    'mekanism:purification_chamber': '§8Требует §7Резонансное ядро',
+    'industrialforegoing:ore_laser_base': '§8Требует §7Резонансное ядро'
   }
   Object.keys(gated).forEach(id => event.add(id, gated[id]))
 })
