@@ -20,6 +20,12 @@ ServerEvents.recipes(event => {
   if (!S) return
   const M = S.mod
 
+  // ВАЖНО про Rhino: объявлять const/let ВНУТРИ блока (if/for) нельзя —
+  // движок поднимает такие объявления в область функции как var, и при
+  // повторном вызове колбэка падает с "redeclaration of var". Поэтому все
+  // хелперы объявляем строго здесь, на верхнем уровне.
+  const fusionItem = id => ({ consume: true, ingredient: { item: id } })
+
   // --- Arcane Solar Core через Enchanting Apparatus (Ars Nouveau) ------------
   // Реагент кладётся в центральный блок, pedestalItems — на аркановые пьедесталы.
   if (Platform.isLoaded('ars_nouveau')) {
@@ -49,20 +55,18 @@ ServerEvents.recipes(event => {
   if (Platform.isLoaded('draconicevolution')) {
     event.remove({ id: 'kubejs:solar/component_draconic' })
 
-    const item = id => ({ consume: true, ingredient: { item: id } })
-
     event.custom({
       type: 'draconicevolution:fusion_crafting',
       catalyst: { item: S.arcane },
       ingredients: [
-        item(M.awakened),
-        item(M.awakened),
-        item(M.awakened),
-        item(M.awakened),
-        item(M.chaosShard),
-        item(M.coreAwakened),
-        item(M.singularity),
-        item(S.cells[3])
+        fusionItem(M.awakened),
+        fusionItem(M.awakened),
+        fusionItem(M.awakened),
+        fusionItem(M.awakened),
+        fusionItem(M.chaosShard),
+        fusionItem(M.coreAwakened),
+        fusionItem(M.singularity),
+        fusionItem(S.cells[3])
       ],
       result: { count: 1, id: S.draconic },
       techLevel: 'draconic',

@@ -50,22 +50,27 @@
 
 ServerEvents.recipes(event => {
 
+  // ВАЖНО про Rhino: объявлять const/let ВНУТРИ блока (if/for) нельзя —
+  // движок поднимает такие объявления в область функции как var, и при
+  // повторном вызове колбэка падает с "redeclaration of var". Поэтому все
+  // хелперы объявляем строго здесь, на верхнем уровне.
+
+  // tier: имя кристалла, energy: стоимость в орбе (как в дефолте),
+  // base: исходные ингредиенты, alloy: сплав-гейт, count: выход
+  const gateCrystal = (tier, energy, base, alloy, count) => {
+    event.remove({ type: 'powah:energizing', output: `powah:crystal_${tier}` })
+    event.custom({
+      type: 'powah:energizing',
+      energy: energy,
+      ingredients: base.concat([{ item: alloy }]),
+      result: { count: count, id: `powah:crystal_${tier}` }
+    }).id(`kubejs:powah/crystal_${tier}`)
+  }
+
   // ==========================================================================
   //  1. КРИСТАЛЛЫ — тирный гейт через лестницу сплавов Mekanism
   // ==========================================================================
   if (Platform.isLoaded('mekanism')) {
-
-    // tier: имя кристалла, energy: стоимость в орбе (как в дефолте),
-    // base: исходные ингредиенты, alloy: сплав-гейт, count: выход
-    const gateCrystal = (tier, energy, base, alloy, count) => {
-      event.remove({ type: 'powah:energizing', output: `powah:crystal_${tier}` })
-      event.custom({
-        type: 'powah:energizing',
-        energy: energy,
-        ingredients: base.concat([{ item: alloy }]),
-        result: { count: count, id: `powah:crystal_${tier}` }
-      }).id(`kubejs:powah/crystal_${tier}`)
-    }
 
     gateCrystal('niotic', 300000,
       [{ tag: 'c:gems/diamond' }],
