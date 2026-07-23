@@ -1,44 +1,113 @@
 // priority: 20
 // requires: powah
 // ============================================================================
-//  Гейты Powah — вписываем энергетику Powah в прогрессию сборки.
+//  Powah — полный проход по балансу.
 //
-//  ПРОБЛЕМА: Powah — «энергетический остров». Реакторы тирятся сами в себе
-//  (starter→…→nitro, каждый = прошлый тир + конденсатор + уранинит), и весь
-//  остальной пак для прокачки не нужен. Плюс числа генерации в дефолте злые
-//  (nitro = 500 000 FE/t — обесценивает и Mekanism, и нашу Solar Flux-пирамиду).
+//  ПРОБЛЕМА 1: вся тирность Powah висит на ванильных камнях —
+//  blaze rod -> алмаз -> изумруд -> незер-звезда. С Mystical Agriculture
+//  в паке это всё фармится семенами, то есть гейта фактически нет.
 //
-//  РЕШЕНИЕ — две ортогональные правки:
+//  ПРОБЛЕМА 2: Powah — «энергетический остров»: качаешься только внутри него,
+//  остальной пак не нужен. Плюс реакторы в дефолте дают 500 000 FE/t.
 //
-//  1) ЧИСЛА -> config/powah.json5  (НЕ KubeJS, правится вручную, рестарт).
-//     Раздел "reactors" -> "generation_rates", срезано ~2-3.5x на верхах:
-//         blazing  10000 -> 6000
-//         niotic   25000 -> 12000
-//         spirited 100000 -> 40000
-//         nitro    500000 -> 150000   (было ~15x sp_8, стало ~4.5x)
-//     starter/basic/hardened НЕ трогаем — ранняя энергия должна быть доступной.
+//  ПРОБЛЕМА 3: солнечные панели Powah подрезают Solar Flux. Powah starter =
+//  20 FE/t против sp_1 = 1 FE/t, то есть стартовый солярник Powah в 20 раз
+//  лучше стартового SFR — вся наша пирамида обесценивается на раннем этапе.
 //
-//  2) КРОСС-МОД ГЕЙТ -> этот файл. Центральный слот верхних реакторов
-//     (был уранинит) заменяем предметом соседней ветки. Низкие тиры остаются
-//     лёгкими, верхние требуют потрогать другие моды. Форма рецепта не меняется:
-//         rlr
-//         lGl   G = гейт-предмет вместо уранинита
-//         rlr
-//     Гейты по возрастанию:
-//         niotic   -> инженерный процессор AE2      (мид-AE2)
-//         spirited -> ultimate-схема Mekanism       (мид-поздний Mekanism)
-//         nitro    -> ядро виверны Draconic         (эндгейм DE)
+//  РЕШЕНИЕ — три точки, все выбраны как «узкие горлышки»:
 //
-//  Каждый гейт под Platform.isLoaded: нет мода — остаётся дефолтный рецепт.
+//  1) КРИСТАЛЛЫ (energizing) — главный choke point. Их едят капаситоры,
+//     энергоячейки, фурнаторы, магматоры, термо, эндер-ячейки, батареи,
+//     кабели. Гейтим кристаллы -> гейтим весь верхний Powah одной правкой.
+//     Лестница сплавов Mekanism ложится на лестницу тиров Powah 1:1:
+//         niotic   (алмаз)        + infused alloy
+//         spirited (изумруд)      + reinforced alloy
+//         nitro    (незер-звезда) + atomic alloy
+//     Стоимость энергии в орбе НЕ трогаем — гейт, а не гринд.
+//
+//  2) ФОТОПАНЕЛЬ (photoelectric_pane) — её ест только solar_panel_starter,
+//     а старшие соляры цепляются за младшие. Значит одна правка гейтит всю
+//     солнечную линейку Powah. В центр вместо стекла — фотоэлемент Solar Flux.
+//     Тематично: солярник Powah строится ВОКРУГ нашего фотоэлемента, две
+//     солнечные системы больше не конкурируют, а стыкуются.
+//
+//  3) РЕАКТОРЫ — сильнейший пассивный генератор пака, поэтому им отдельный
+//     гейт поверх кристального. Центральный слот (был уранинит) -> предмет
+//     соседней ветки: AE2 -> Mekanism -> Draconic.
+//
+//  ЧИСЛА -> config/powah.json5 (НЕ KubeJS, рестарт). Раздел reactors ->
+//  generation_rates срезан ~2-3.5x на верхах:
+//      blazing 10000->6000, niotic 25000->12000,
+//      spirited 100000->40000, nitro 500000->150000 (было ~15x sp_8, стало ~4.5x)
+//  starter/basic/hardened не трогаем — ранняя энергия должна быть доступной.
+//  Фурнаторы/магматоры оставлены как есть: они жрут топливо, потолок 40k —
+//  это честный активный генератор.
+//
+//  ВАЖНО про удаление: рецепты Powah лежат в data/powah/recipe/crafting/...,
+//  то есть их ID — powah:crafting/<имя>, а не powah:<имя>. Чтобы не зависеть
+//  от путей, удаляем по паре тип+выход — так рецепт находится всегда.
 // ============================================================================
 
 ServerEvents.recipes(event => {
 
-  // tier: id тира, prev: реактор прошлого тира, cap: конденсатор тира,
-  // gate: кросс-мод предмет в центр, mod: мод, который должен быть загружен
-  const gateReactor = (tier, prev, cap, gate, mod) => {
+  // ==========================================================================
+  //  1. КРИСТАЛЛЫ — тирный гейт через лестницу сплавов Mekanism
+  // ==========================================================================
+  if (Platform.isLoaded('mekanism')) {
+
+    // tier: имя кристалла, energy: стоимость в орбе (как в дефолте),
+    // base: исходные ингредиенты, alloy: сплав-гейт, count: выход
+    const gateCrystal = (tier, energy, base, alloy, count) => {
+      event.remove({ type: 'powah:energizing', output: `powah:crystal_${tier}` })
+      event.custom({
+        type: 'powah:energizing',
+        energy: energy,
+        ingredients: base.concat([{ item: alloy }]),
+        result: { count: count, id: `powah:crystal_${tier}` }
+      }).id(`kubejs:powah/crystal_${tier}`)
+    }
+
+    gateCrystal('niotic', 300000,
+      [{ tag: 'c:gems/diamond' }],
+      'mekanism:alloy_infused', 1)
+
+    gateCrystal('spirited', 1000000,
+      [{ tag: 'c:gems/emerald' }],
+      'mekanism:alloy_reinforced', 1)
+
+    // nitro в дефолте даёт сразу 16 штук — выход сохраняем, гейт ставим на вход
+    gateCrystal('nitro', 20000000, [
+      { tag: 'c:nether_stars' },
+      { tag: 'c:storage_blocks/redstone' },
+      { tag: 'c:storage_blocks/redstone' },
+      { item: 'powah:blazing_crystal_block' }
+    ], 'mekanism:alloy_atomic', 16)
+  }
+
+  // ==========================================================================
+  //  2. ФОТОПАНЕЛЬ — вся солнечная линейка Powah через фотоэлемент Solar Flux
+  // ==========================================================================
+  if (Platform.isLoaded('solarflux')) {
+    event.remove({ type: 'minecraft:crafting_shaped', output: 'powah:photoelectric_pane' })
+    event.shaped('powah:photoelectric_pane', [
+      'dld',
+      'lCl',
+      'dld'
+    ], {
+      d: 'powah:dielectric_paste',
+      l: 'minecraft:lapis_lazuli',
+      C: 'solarflux:photovoltaic_cell_1'
+    }).id('kubejs:powah/photoelectric_pane')
+  }
+
+  // ==========================================================================
+  //  3. РЕАКТОРЫ — отдельный гейт поверх кристального
+  // ==========================================================================
+  // tier: тир реактора, prev: реактор прошлого тира, gate: кросс-мод предмет,
+  // mod: мод, без которого гейт не ставим (остаётся дефолтный рецепт)
+  const gateReactor = (tier, prev, gate, mod) => {
     if (!Platform.isLoaded(mod)) return
-    event.remove({ id: `powah:reactor_${tier}` })
+    event.remove({ type: 'minecraft:crafting_shaped', output: `powah:reactor_${tier}` })
     event.shaped(Item.of(`powah:reactor_${tier}`, 4), [
       'rlr',
       'lGl',
@@ -50,7 +119,7 @@ ServerEvents.recipes(event => {
     }).id(`kubejs:powah/reactor_${tier}`)
   }
 
-  gateReactor('niotic',   'blazing', 'niotic',   'ae2:engineering_processor',        'ae2')
-  gateReactor('spirited', 'niotic',  'spirited', 'mekanism:ultimate_control_circuit', 'mekanism')
-  gateReactor('nitro',    'spirited','nitro',    'draconicevolution:wyvern_core',     'draconicevolution')
+  gateReactor('niotic',   'blazing',  'ae2:engineering_processor',         'ae2')
+  gateReactor('spirited', 'niotic',   'mekanism:ultimate_control_circuit', 'mekanism')
+  gateReactor('nitro',    'spirited', 'draconicevolution:wyvern_core',     'draconicevolution')
 })
