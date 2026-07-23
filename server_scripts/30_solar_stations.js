@@ -1,21 +1,18 @@
 // priority: 40
 // requires: solarflux
-// ignored: true
 // ============================================================================
-//  ОПЦИОНАЛЬНО — верхние компоненты через станции модов вместо верстака.
+//  Верхние компоненты через станции модов вместо верстака.
 //
-//  Файл ВЫКЛЮЧЕН директивой "ignored: true" в шапке.
-//  Чтобы включить — убери эту строку и сделай /reload.
+//  Arcane Solar Core  -> только Enchanting Apparatus (Ars Nouveau)
+//  Draconic Solar Core -> только Fusion Crafting (Draconic Evolution)
+//  Чтобы вернуть верстак — добавь в шапку строку "// ignored: true" и /reload.
 //
-//  ВАЖНО, прочитай перед включением:
-//  Схемы JSON у Ars Nouveau и Draconic Evolution меняются между версиями.
-//  Вытащи эталонный рецепт прямо из jar и сверь имена полей:
-//
-//    unzip -p mods/ars_nouveau-*.jar 'data/ars_nouveau/recipe/*.json' | head -80
-//    unzip -p mods/Draconic-Evolution-*.jar 'data/draconicevolution/recipe/*fusion*' | head -80
-//
-//  Если поля не совпадут — рецепт просто не зарегистрируется, а в
-//  logs/kubejs/server.log будет ошибка парсинга с указанием проблемного ключа.
+//  Схемы JSON сверены с jar'ами сборки (23.07.2026):
+//    ars_nouveau-1.21.1-5.12.1:  reagent — ОБЪЕКТ (не массив!), поле result
+//    Draconic-Evolution-3.1.4:   ingredients [{consume, ingredient}],
+//                                techLevel строкой, totalEnergy
+//  Если рецепт всё же не зарегистрируется — ошибка парсинга будет в
+//  logs/kubejs/server.log с указанием проблемного ключа.
 // ============================================================================
 
 ServerEvents.recipes(event => {
@@ -25,45 +22,51 @@ ServerEvents.recipes(event => {
 
   // --- Arcane Solar Core через Enchanting Apparatus (Ars Nouveau) ------------
   // Реагент кладётся в центральный блок, pedestalItems — на аркановые пьедесталы.
-  event.remove({ id: 'kubejs:solar/component_arcane' })
+  if (Platform.isLoaded('ars_nouveau')) {
+    event.remove({ id: 'kubejs:solar/component_arcane' })
 
-  event.custom({
-    type: 'ars_nouveau:enchanting_apparatus',
-    reagent: [{ item: S.matrix }],
-    pedestalItems: [
-      { item: M.sourceBlock },
-      { item: M.sourceBlock },
-      { item: M.essManipulation },
-      { item: M.wildenTribute },
-      { item: M.iesnium },
-      { item: M.spiritGem },
-      { item: S.cells[3] },
-      { item: S.capacitor }
-    ],
-    output: { id: S.arcane, count: 1 },
-    sourceCost: 10000,
-    keepNbtOfReagent: false
-  }).id('kubejs:solar/component_arcane_apparatus')
+    event.custom({
+      type: 'ars_nouveau:enchanting_apparatus',
+      reagent: { item: S.matrix },
+      pedestalItems: [
+        { item: M.sourceBlock },
+        { item: M.sourceBlock },
+        { item: M.essManipulation },
+        { item: M.wildenTribute },
+        { item: M.iesnium },
+        { item: M.spiritGem },
+        { item: S.cells[3] },
+        { item: S.capacitor }
+      ],
+      result: { count: 1, id: S.arcane },
+      sourceCost: 10000,
+      keepNbtOfReagent: false
+    }).id('kubejs:solar/component_arcane_apparatus')
+  }
 
   // --- Draconic Solar Core через Fusion Crafting ----------------------------
   // catalyst кладётся в Fusion Crafting Core, ingredients — в инжекторы.
-  event.remove({ id: 'kubejs:solar/component_draconic' })
+  if (Platform.isLoaded('draconicevolution')) {
+    event.remove({ id: 'kubejs:solar/component_draconic' })
 
-  event.custom({
-    type: 'draconicevolution:fusion_crafting',
-    catalyst: { item: S.arcane },
-    ingredients: [
-      { item: M.awakened },
-      { item: M.awakened },
-      { item: M.awakened },
-      { item: M.awakened },
-      { item: M.chaosShard },
-      { item: M.coreAwakened },
-      { item: M.singularity },
-      { item: S.cells[3] }
-    ],
-    result: { id: S.draconic, count: 1 },
-    total_energy: 64000000,
-    tier: 3
-  }).id('kubejs:solar/component_draconic_fusion')
+    const item = id => ({ consume: true, ingredient: { item: id } })
+
+    event.custom({
+      type: 'draconicevolution:fusion_crafting',
+      catalyst: { item: S.arcane },
+      ingredients: [
+        item(M.awakened),
+        item(M.awakened),
+        item(M.awakened),
+        item(M.awakened),
+        item(M.chaosShard),
+        item(M.coreAwakened),
+        item(M.singularity),
+        item(S.cells[3])
+      ],
+      result: { count: 1, id: S.draconic },
+      techLevel: 'draconic',
+      totalEnergy: 64000000
+    }).id('kubejs:solar/component_draconic_fusion')
+  }
 })
