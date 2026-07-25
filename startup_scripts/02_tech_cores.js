@@ -32,5 +32,28 @@ StartupEvents.registry('item', event => {
   event.create('quantum_core')
     .rarity('epic')
     .maxStackSize(16)
+
+  // Магический тир — связка Ars Nouveau + Occultism + Mystical Agriculture.
+  // Гейт в высшие ритуалы, архимагию и семена 5+ тира.
+  event.create('arcane_core')
+    .rarity('rare')
+    .maxStackSize(16)
+
+  // Тир IV — Абсолютный гипер-эндгейм (AE2 + Mek Antimatter + DE Chaotic).
+  // Главное связующее ядро гипер-автоматизации и реакторов.
+  event.create('singularity_core')
+    .rarity('epic')
+    .glow(true)
+    .maxStackSize(16)
+
+  // Оптические компоненты для лазерных установок и матриц
+  event.create('photon_lens')
+    .rarity('uncommon')
+    .maxStackSize(64)
+
+  event.create('prismatic_focus')
+    .rarity('rare')
+    .maxStackSize(64)
 })
+
 

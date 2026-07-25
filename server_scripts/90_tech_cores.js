@@ -44,9 +44,13 @@
 
 ServerEvents.recipes(event => {
 
-  const CORE_I   = 'kubejs:mechanical_core'
-  const CORE_II  = 'kubejs:resonant_core'
-  const CORE_III = 'kubejs:quantum_core'
+  const CORE_I           = 'kubejs:mechanical_core'
+  const CORE_II          = 'kubejs:resonant_core'
+  const CORE_III         = 'kubejs:quantum_core'
+  const CORE_ARCANE      = 'kubejs:arcane_core'
+  const CORE_SINGULARITY = 'kubejs:singularity_core'
+  const LENS_PHOTON      = 'kubejs:photon_lens'
+  const FOCUS_PRISMATIC  = 'kubejs:prismatic_focus'
 
   // ==========================================================================
   //  Сами ядра
@@ -99,8 +103,60 @@ ServerEvents.recipes(event => {
     M: CORE_II
   }).id('kubejs:cores/quantum_core')
 
+  // --- Магический тир: Ars Nouveau + Occultism + Mystical Agriculture -------
+  const arcaneGem = Platform.isLoaded('ars_nouveau') ? 'ars_nouveau:source_gem_block' : 'minecraft:amethyst_block'
+  const spiritGem = Platform.isLoaded('occultism') ? 'occultism:spirit_attuned_gem' : 'minecraft:diamond'
+  const supremiumIngot = Platform.isLoaded('mysticalagriculture') ? 'mysticalagriculture:supremium_ingot' : 'minecraft:netherite_ingot'
+
+  event.shaped(CORE_ARCANE, [
+    'SGS',
+    'GAM',
+    'SGS'
+  ], {
+    S: supremiumIngot,
+    G: spiritGem,
+    A: arcaneGem,
+    M: CORE_II
+  }).id('kubejs:cores/arcane_core')
+
+  // --- Тир IV: Сингулярное ядро (Hyper Endgame) --------------------------------
+  const antimatterPellet = Platform.isLoaded('mekanism') ? 'mekanism:pellet_antimatter' : 'minecraft:nether_star'
+  const ae2Singularity = Platform.isLoaded('ae2') ? 'ae2:singularity' : 'minecraft:dragon_breath'
+  const insaniumEssence = Platform.isLoaded('mysticalagradditions') ? 'mysticalagradditions:insanium_essence' : 'minecraft:end_crystal'
+
+  event.shaped(CORE_SINGULARITY, [
+    'SAS',
+    'IQI',
+    'SAS'
+  ], {
+    S: ae2Singularity,
+    A: antimatterPellet,
+    I: insaniumEssence,
+    Q: CORE_III
+  }).id('kubejs:cores/singularity_core')
+
+  // --- Оптические компоненты ------------------------------------------------
+  event.shaped(LENS_PHOTON, [
+    ' G ',
+    'GCG',
+    ' G '
+  ], {
+    G: '#c:glass_blocks',
+    C: 'minecraft:amethyst_shard'
+  }).id('kubejs:cores/photon_lens')
+
+  event.shaped(FOCUS_PRISMATIC, [
+    'DFD',
+    'FLF',
+    'DFD'
+  ], {
+    D: '#c:gems/diamond',
+    F: 'minecraft:glowstone_dust',
+    L: LENS_PHOTON
+  }).id('kubejs:cores/prismatic_focus')
+
   // ==========================================================================
-  //  Гейт III — вход в Draconic Evolution
+  //  Гейт III & IV — вход в Draconic Evolution (Wyvern / Chaotic)
   // ==========================================================================
   if (Platform.isLoaded('draconicevolution')) {
     event.remove({ output: 'draconicevolution:draconium_core' })
@@ -113,7 +169,19 @@ ServerEvents.recipes(event => {
       C: '#c:circuits/ultimate',
       Q: CORE_III
     }).id('kubejs:cores/draconium_core')
+
+    event.remove({ output: 'draconicevolution:chaotic_core' })
+    event.shaped('draconicevolution:chaotic_core', [
+      'CAC',
+      'ASA',
+      'CAC'
+    ], {
+      C: 'draconicevolution:chaos_shard',
+      A: 'draconicevolution:awakened_core',
+      S: CORE_SINGULARITY
+    }).id('kubejs:cores/chaotic_core')
   }
+
 
   // ==========================================================================
   //  Гейт I — вход в обогащение руды (2x) во всех ветках

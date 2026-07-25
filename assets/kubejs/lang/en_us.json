@@ -6,6 +6,11 @@
   "item.kubejs.draconic_solar_core": "Draconic Solar Core",
   "item.kubejs.mechanical_core": "Mechanical Core",
   "item.kubejs.resonant_core": "Resonant Core",
-  "item.kubejs.quantum_core": "Quantum Core"
+  "item.kubejs.quantum_core": "Quantum Core",
+  "item.kubejs.arcane_core": "Arcane Core",
+  "item.kubejs.singularity_core": "Singularity Core",
+  "item.kubejs.photon_lens": "Photon Lens",
+  "item.kubejs.prismatic_focus": "Prismatic Focus"
 }
+
 
