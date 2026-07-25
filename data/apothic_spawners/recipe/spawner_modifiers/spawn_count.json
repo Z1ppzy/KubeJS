@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "apothic_spawners"
+    }
+  ],
+  "type": "apothic_spawners:spawner_modifier",
+  "mainhand": {
+    "item": "minecraft:fermented_spider_eye"
+  },
+  "offhand": {
+    "item": "kubejs:bio_matrix"
+  },
+  "consumes_offhand": false,
+  "stat_changes": [
+    {
+      "type": "apothic_spawners:spawn_count",
+      "value": 2,
+      "max": 16
+    }
+  ]
+}

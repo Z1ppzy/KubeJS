@@ -79,5 +79,17 @@ StartupEvents.registry('item', event => {
     .texture('kubejs:item/bio_matrix')
     .rarity('uncommon')
     .maxStackSize(16)
-})
 
+  // Shared controller for programmable logistics and ME network peripherals.
+  event.create('automation_bus')
+    .texture('kubejs:item/automation_bus')
+    .rarity('rare')
+    .maxStackSize(16)
+
+  // Gateway reward consumed by the most dangerous neural simulations.
+  event.create('neural_calibration_matrix')
+    .texture('kubejs:item/neural_calibration_matrix')
+    .rarity('epic')
+    .glow(true)
+    .maxStackSize(64)
+})

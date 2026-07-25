@@ -13,6 +13,13 @@
   "item.kubejs.prismatic_focus": "Prismatic Focus",
   "item.kubejs.hyper_spatial_core": "Hyper-Spatial Core",
   "item.kubejs.chronos_core": "Chronos Core",
-  "item.kubejs.bio_matrix": "Bio-Matrix"
+  "item.kubejs.bio_matrix": "Bio-Matrix",
+  "item.kubejs.automation_bus": "Automation Bus",
+  "item.kubejs.neural_calibration_matrix": "Neural Calibration Matrix",
+  "kubejs.neural_calibration": "Neural Calibration Gateway",
+  "gateways.kubejs.neural_calibration": "Neural Calibration Gateway",
+  "material.kubejs.dark_steel": "Dark Steel",
+  "material.kubejs.refined_obsidian": "Refined Obsidian",
+  "material.kubejs.draconium": "Draconium",
+  "material.kubejs.duratium": "Duratium"
 }
-

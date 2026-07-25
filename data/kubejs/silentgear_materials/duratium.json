@@ -1,0 +1,53 @@
+{
+  "type": "silentgear:simple",
+  "parent": "silentgear:empty",
+  "crafting": {
+    "can_salvage": true,
+    "categories": [
+      "metal",
+      "endgame"
+    ],
+    "gear_type_blacklist": [],
+    "ingredient": {
+      "tag": "c:ingots/duratium"
+    },
+    "part_substitutes": {}
+  },
+  "display": {
+    "color": "#FF57C7C2",
+    "main_texture_type": "HIGH_CONTRAST",
+    "name": {
+      "translate": "material.kubejs.duratium"
+    },
+    "name_prefix": ""
+  },
+  "properties": {
+    "silentgear:main": {
+      "armor": 22.0,
+      "armor/boots": 4.0,
+      "armor/chestplate": 8.0,
+      "armor/helmet": 4.0,
+      "armor/leggings": 6.0,
+      "armor_durability": 40.0,
+      "armor_toughness": 6.0,
+      "attack_damage": 6.0,
+      "attack_speed": 0.0,
+      "charging_value": 1.15,
+      "draw_speed": 0.0,
+      "durability": 1500.0,
+      "enchantment_value": 12.0,
+      "harvest_speed": 15.0,
+      "harvest_tier": {
+        "incorrect_blocks_for_tool": "minecraft:incorrect_for_netherite_tool",
+        "level_hint": "4",
+        "name": "netherite"
+      },
+      "magic_armor": 4.0,
+      "magic_damage": 1.0,
+      "ranged_damage": 2.0,
+      "rarity": 70.0,
+      "repair_value": 0.14,
+      "traits": []
+    }
+  }
+}

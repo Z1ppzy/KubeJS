@@ -1,0 +1,37 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "gateways"
+    },
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "hostilenetworks"
+    }
+  ],
+  "type": "gateways:gate_recipe",
+  "group": "kubejs",
+  "pattern": [
+    "PEP",
+    "QBQ",
+    "PEP"
+  ],
+  "key": {
+    "P": {
+      "item": "hostilenetworks:prediction_matrix"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "Q": {
+      "tag": "c:gems/quartz"
+    },
+    "B": {
+      "item": "kubejs:bio_matrix"
+    }
+  },
+  "result": {
+    "id": "gateways:gate_pearl"
+  },
+  "gateway": "kubejs:neural_calibration"
+}

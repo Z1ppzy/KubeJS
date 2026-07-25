@@ -13,6 +13,13 @@
   "item.kubejs.prismatic_focus": "Призматический фокус",
   "item.kubejs.hyper_spatial_core": "Гипер-пространственное ядро",
   "item.kubejs.chronos_core": "Хроно-ядро",
-  "item.kubejs.bio_matrix": "Био-матрица"
+  "item.kubejs.bio_matrix": "Био-матрица",
+  "item.kubejs.automation_bus": "Шина автоматизации",
+  "item.kubejs.neural_calibration_matrix": "Матрица нейронной калибровки",
+  "kubejs.neural_calibration": "Врата нейронной калибровки",
+  "gateways.kubejs.neural_calibration": "Врата нейронной калибровки",
+  "material.kubejs.dark_steel": "Тёмная сталь",
+  "material.kubejs.refined_obsidian": "Очищенный обсидиан",
+  "material.kubejs.draconium": "Дракониум",
+  "material.kubejs.duratium": "Дуратий"
 }
-
