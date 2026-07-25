@@ -73,4 +73,38 @@ ServerEvents.recipes(event => {
   //   90_tech_cores.js   — лазер Industrial Foregoing
   // Выход рецепта — ТЕГ (c:ores/draconium), не предмет, поэтому снимаем по ID.
   event.remove({ id: 'occultism:miner/ores/draconium_ore' })
+
+  // ==========================================================================
+  //  Привязка Arcane Core к рецептам вышей магии и агрикультуры
+  // ==========================================================================
+  const CORE_ARCANE = 'kubejs:arcane_core'
+
+  // --- Ars Nouveau: Archmage Robes -----------------------------------------
+  if (Platform.isLoaded('ars_nouveau')) {
+    event.remove({ output: 'ars_nouveau:archmage_robes' })
+    event.shaped('ars_nouveau:archmage_robes', [
+      'A A',
+      'CQC',
+      'CCC'
+    ], {
+      A: 'ars_nouveau:magebloom_block',
+      C: 'ars_nouveau:wilden_tribute',
+      Q: CORE_ARCANE
+    }).id('kubejs:magic/archmage_robes')
+  }
+
+  // --- Mystical Agriculture: Master Infusion Crystal -----------------------
+  if (Platform.isLoaded('mysticalagriculture')) {
+    event.remove({ output: 'mysticalagriculture:master_infusion_crystal' })
+    event.shaped('mysticalagriculture:master_infusion_crystal', [
+      'SCS',
+      'CQC',
+      'SCS'
+    ], {
+      S: 'mysticalagriculture:supremium_gemstone',
+      C: 'mysticalagriculture:supremium_ingot',
+      Q: CORE_ARCANE
+    }).id('kubejs:magic/master_infusion_crystal')
+  }
 })
+
