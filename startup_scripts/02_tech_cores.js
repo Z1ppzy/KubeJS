@@ -26,4 +26,11 @@ StartupEvents.registry('item', event => {
   event.create('resonant_core')
     .rarity('uncommon')
     .maxStackSize(16)
+
+  // Тир III — эндгейм-технологии Mekanism + Modern Industrialization.
+  // Гейт в механизмы и слияние Draconic Evolution.
+  event.create('quantum_core')
+    .rarity('epic')
+    .maxStackSize(16)
 })
+

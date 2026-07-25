@@ -44,8 +44,9 @@
 
 ServerEvents.recipes(event => {
 
-  const CORE_I  = 'kubejs:mechanical_core'
-  const CORE_II = 'kubejs:resonant_core'
+  const CORE_I   = 'kubejs:mechanical_core'
+  const CORE_II  = 'kubejs:resonant_core'
+  const CORE_III = 'kubejs:quantum_core'
 
   // ==========================================================================
   //  Сами ядра
@@ -78,6 +79,40 @@ ServerEvents.recipes(event => {
       P: 'powah:capacitor_hardened',
       M: CORE_I
     }).id('kubejs:cores/resonant_core')
+  }
+
+  // --- Тир III: высшая индустрия (Mekanism + Modern Industrialization) -------
+  // Резонансное ядро II в сердце, высшие схемы Mekanism и MI (или Звезда Незера),
+  // атомарный сплав и телепортационные ядра по бокам.
+  const quantumCircuit = Platform.isLoaded('modern_industrialization') 
+    ? 'modern_industrialization:quantum_circuit' 
+    : '#c:circuits/ultimate'
+
+  event.shaped(CORE_III, [
+    'ATA',
+    'QMQ',
+    'ATA'
+  ], {
+    A: 'mekanism:atomic_alloy',
+    T: 'mekanism:teleportation_core',
+    Q: quantumCircuit,
+    M: CORE_II
+  }).id('kubejs:cores/quantum_core')
+
+  // ==========================================================================
+  //  Гейт III — вход в Draconic Evolution
+  // ==========================================================================
+  if (Platform.isLoaded('draconicevolution')) {
+    event.remove({ output: 'draconicevolution:draconium_core' })
+    event.shaped('draconicevolution:draconium_core', [
+      'DCD',
+      'CQC',
+      'DCD'
+    ], {
+      D: 'draconicevolution:draconium_ingot',
+      C: '#c:circuits/ultimate',
+      Q: CORE_III
+    }).id('kubejs:cores/draconium_core')
   }
 
   // ==========================================================================
