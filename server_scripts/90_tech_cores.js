@@ -49,8 +49,14 @@ ServerEvents.recipes(event => {
   const CORE_III         = 'kubejs:quantum_core'
   const CORE_ARCANE      = 'kubejs:arcane_core'
   const CORE_SINGULARITY = 'kubejs:singularity_core'
+  const CORE_HYPER       = 'kubejs:hyper_spatial_core'
+  const CORE_CHRONOS     = 'kubejs:chronos_core'
+  const MATRIX_BIO       = 'kubejs:bio_matrix'
   const LENS_PHOTON      = 'kubejs:photon_lens'
   const FOCUS_PRISMATIC  = 'kubejs:prismatic_focus'
+  const HAS_OLD_AE2_LINK = Item.exists('ae2:quantum_link_chamber')
+  const AE2_QUANTUM_LINK = HAS_OLD_AE2_LINK ? 'ae2:quantum_link_chamber' : 'ae2:quantum_link'
+  const HAS_EIO_TRANSCEIVER = Item.exists('enderio:dimensional_transceiver')
 
   // ==========================================================================
   //  Сами ядра
@@ -155,6 +161,183 @@ ServerEvents.recipes(event => {
     F: 'minecraft:glowstone_dust',
     L: LENS_PHOTON
   }).id('kubejs:cores/prismatic_focus')
+
+  // --- Специализированные многофункциональные компоненты --------------------
+  // Ни один из ингредиентов ниже не производится устройствами, которые
+  // гейтятся соответствующим компонентом: прямых циклов нет.
+  if (Platform.isLoaded('ae2') &&
+      Platform.isLoaded('enderio') &&
+      Item.exists('ae2:fluix_crystal') &&
+      Item.exists('enderio:vibrant_alloy_ingot')) {
+    event.shaped(CORE_HYPER, [
+      'FTF',
+      'VRV',
+      'FTF'
+    ], {
+      F: 'ae2:fluix_crystal',
+      T: 'mekanism:teleportation_core',
+      V: 'enderio:vibrant_alloy_ingot',
+      R: CORE_II
+    }).id('kubejs:cores/hyper_spatial_core')
+  }
+
+  event.shaped(CORE_CHRONOS, [
+    'GCG',
+    'RPR',
+    'GLG'
+  ], {
+    G: '#c:gears/gold',
+    C: 'minecraft:clock',
+    R: '#c:dusts/redstone',
+    P: FOCUS_PRISMATIC,
+    L: '#c:dusts/glowstone'
+  }).id('kubejs:cores/chronos_core')
+
+  if (Platform.isLoaded('industrialforegoing') &&
+      Platform.isLoaded('mysticalagriculture') &&
+      Item.exists('mysticalagriculture:fertilized_essence')) {
+    event.shaped(MATRIX_BIO, [
+      'PFP',
+      'BMS',
+      'PFP'
+    ], {
+      P: '#c:plastics',
+      F: 'mysticalagriculture:fertilized_essence',
+      B: 'minecraft:bone_block',
+      M: CORE_I,
+      S: 'minecraft:slime_block'
+    }).id('kubejs:cores/bio_matrix')
+  }
+
+  // ==========================================================================
+  //  Специализированные гейты: пространство, время и биотехнологии
+  // ==========================================================================
+
+  // AE2 1.21 переименовал quantum_link_chamber в quantum_link.
+  // Item.exists сохраняет совместимость со старым ID и не создаёт битый output.
+  if (Platform.isLoaded('ae2') && Item.exists(AE2_QUANTUM_LINK)) {
+    event.remove({ type: 'minecraft:crafting_shaped', output: AE2_QUANTUM_LINK })
+    event.shaped(AE2_QUANTUM_LINK, [
+      'AHA',
+      'B B',
+      'ABA'
+    ], {
+      A: 'ae2:quartz_glass',
+      B: 'ae2:fluix_pearl',
+      H: CORE_HYPER
+    }).id('kubejs:cores/quantum_link')
+  }
+
+  if (Platform.isLoaded('powah') && Item.exists('powah:player_transmitter_basic')) {
+    event.remove({ type: 'minecraft:crafting_shaped', output: 'powah:player_transmitter_basic' })
+    event.shaped('powah:player_transmitter_basic', [
+      ' P ',
+      'ICI',
+      ' H '
+    ], {
+      P: 'powah:player_transmitter_starter',
+      I: 'powah:capacitor_basic',
+      C: 'powah:dielectric_casing',
+      H: CORE_HYPER
+    }).id('kubejs:cores/player_transmitter_basic')
+  }
+
+  // Dimensional Transceiver ещё не портирован в Ender IO 1.21.1.
+  // На актуальной версии тот же пространственный гейт ставится на Travel Anchor.
+  if (Platform.isLoaded('enderio') && HAS_EIO_TRANSCEIVER) {
+    event.remove({ type: 'minecraft:crafting_shaped', output: 'enderio:dimensional_transceiver' })
+    event.shaped('enderio:dimensional_transceiver', [
+      'VOV',
+      'OHO',
+      'VOV'
+    ], {
+      V: 'enderio:vibrant_alloy_ingot',
+      O: 'enderio:octadic_capacitor',
+      H: CORE_HYPER
+    }).id('kubejs:cores/dimensional_transceiver')
+  } else if (Platform.isLoaded('enderio') && Item.exists('enderio:travel_anchor')) {
+    event.remove({ type: 'minecraft:crafting_shaped', output: 'enderio:travel_anchor' })
+    event.shaped('enderio:travel_anchor', [
+      'IBI',
+      'BHB',
+      'IBI'
+    ], {
+      I: '#c:ingots/iron',
+      B: 'enderio:conduit_binder',
+      H: CORE_HYPER
+    }).id('kubejs:cores/travel_anchor')
+  }
+
+  if (Platform.isLoaded('ae2') && Item.exists('ae2:speed_card')) {
+    event.remove({ output: 'ae2:speed_card' })
+    event.shapeless('ae2:speed_card', [
+      'ae2:advanced_card',
+      '#ae2:all_fluix',
+      CORE_CHRONOS
+    ]).id('kubejs:cores/speed_card')
+  }
+
+  // Дефолт отключён в config Solar Flux; заменяем рецепт из 35_solar_upgrades.js.
+  if (Platform.isLoaded('solarflux') &&
+      Platform.isLoaded('enderio') &&
+      Item.exists('solarflux:efficiency_upgrade')) {
+    event.remove({ output: 'solarflux:efficiency_upgrade' })
+    event.shaped(Item.of('solarflux:efficiency_upgrade', 2), [
+      'ECE',
+      'CBC',
+      'EHE'
+    ], {
+      E: 'solarflux:emerald_glass',
+      C: 'enderio:photovoltaic_composite',
+      B: 'solarflux:blank_upgrade',
+      H: CORE_CHRONOS
+    }).id('kubejs:cores/efficiency_upgrade')
+  }
+
+  if (Item.exists('mekanism:upgrade_speed')) {
+    event.remove({ type: 'minecraft:crafting_shaped', output: 'mekanism:upgrade_speed' })
+    event.shaped('mekanism:upgrade_speed', [
+      ' G ',
+      'AHA',
+      ' G '
+    ], {
+      G: '#c:glass_blocks/cheap',
+      A: '#mekanism:alloys/infused',
+      H: CORE_CHRONOS
+    }).id('kubejs:cores/upgrade_speed')
+  }
+
+  if (Platform.isLoaded('industrialforegoing') && Item.exists('industrialforegoing:mob_crusher')) {
+    event.remove({ type: 'minecraft:crafting_shaped', output: 'industrialforegoing:mob_crusher' })
+    event.shaped('industrialforegoing:mob_crusher', [
+      'PSP',
+      'BMB',
+      'GQG'
+    ], {
+      P: '#c:plastics',
+      S: 'minecraft:iron_sword',
+      B: 'minecraft:book',
+      M: '#industrialforegoing:machine_frame/advanced',
+      G: '#c:gears/gold',
+      Q: MATRIX_BIO
+    }).id('kubejs:cores/mob_crusher')
+  }
+
+  if (Platform.isLoaded('industrialforegoing') && Item.exists('industrialforegoing:plant_gatherer')) {
+    event.remove({ type: 'minecraft:crafting_shaped', output: 'industrialforegoing:plant_gatherer' })
+    event.shaped('industrialforegoing:plant_gatherer', [
+      'PHP',
+      'AMA',
+      'GQG'
+    ], {
+      P: '#c:plastics',
+      H: 'minecraft:iron_hoe',
+      A: 'minecraft:iron_axe',
+      M: '#industrialforegoing:machine_frame/pity',
+      G: '#c:gears/gold',
+      Q: MATRIX_BIO
+    }).id('kubejs:cores/plant_gatherer')
+  }
 
   // ==========================================================================
   //  Гейт III & IV — вход в Draconic Evolution (Wyvern / Chaotic)

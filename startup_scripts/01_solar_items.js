@@ -13,26 +13,31 @@ StartupEvents.registry('item', event => {
 
   // Тир I-II — стекло + медь, доступно в первый день
   event.create('solar_lens')
+    .texture('kubejs:item/solar_lens')
     .rarity('common')
     .maxStackSize(64)
 
   // Тир III-IV — Powah + схемы Mekanism
   event.create('photon_capacitor')
+    .texture('kubejs:item/photon_capacitor')
     .rarity('uncommon')
     .maxStackSize(64)
 
   // Тир V-VI — AE2 + Industrial Foregoing + Modern Industrialization
   event.create('quantum_solar_matrix')
+    .texture('kubejs:item/quantum_solar_matrix')
     .rarity('rare')
     .maxStackSize(16)
 
   // Тир VII — Ars Nouveau + Occultism + Mystical Agriculture
   event.create('arcane_solar_core')
+    .texture('kubejs:item/arcane_solar_core')
     .rarity('rare')
     .maxStackSize(16)
 
   // Тир VIII — Draconic Evolution
   event.create('draconic_solar_core')
+    .texture('kubejs:item/draconic_solar_core')
     .rarity('epic')
     .maxStackSize(16)
 })

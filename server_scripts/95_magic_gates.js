@@ -3,9 +3,9 @@
 // ============================================================================
 //  Магия — стыковка с системой ядер.
 //
-//  ARS NOUVEAU: чист, правок не потребовалось. Проверено поиском по всем
-//  1012 рецептам — мод не производит ресурсы чужих модов (единственное
-//  совпадение, archmage_book_upgrade, незер-звезду ПОТРЕБЛЯЕТ, а не выдаёт).
+//  ARS NOUVEAU: не производит ресурсы чужих модов, но Arcanist Robes
+//  привязаны к Arcane Core. В 1.21.1 предмет называется arcanist_robes;
+//  несуществующий archmage_robes намеренно нигде не используется.
 //  Ars Energistique — только хранение источника в ME-ячейках, не обход гейтов.
 //  Связь с паком у Ars уже есть с нашей стороны: арканное солнечное ядро
 //  (10_solar_components.js) требует его материалы для панели VII.
@@ -36,6 +36,7 @@
 ServerEvents.recipes(event => {
 
   const CORE_II = 'kubejs:resonant_core'
+  const MATRIX_BIO = 'kubejs:bio_matrix'
 
   // --- Dimensional Mineshaft ------------------------------------------------
   event.remove({ type: 'occultism:ritual', output: 'occultism:dimensional_mineshaft' })
@@ -75,14 +76,16 @@ ServerEvents.recipes(event => {
   event.remove({ id: 'occultism:miner/ores/draconium_ore' })
 
   // ==========================================================================
-  //  Привязка Arcane Core к рецептам вышей магии и агрикультуры
+  //  Привязка Arcane Core к рецептам высшей магии и агрикультуры
   // ==========================================================================
   const CORE_ARCANE = 'kubejs:arcane_core'
 
-  // --- Ars Nouveau: Archmage Robes -----------------------------------------
-  if (Platform.isLoaded('ars_nouveau')) {
-    event.remove({ output: 'ars_nouveau:archmage_robes' })
-    event.shaped('ars_nouveau:archmage_robes', [
+  // --- Ars Nouveau: Arcanist Robes -----------------------------------------
+  // archmage_robes в Ars Nouveau 1.21.1 не существует; актуальный ID —
+  // arcanist_robes. Проверка не даёт KubeJS создать рецепт с пустым output.
+  if (Platform.isLoaded('ars_nouveau') && Item.exists('ars_nouveau:arcanist_robes')) {
+    event.remove({ output: 'ars_nouveau:arcanist_robes' })
+    event.shaped('ars_nouveau:arcanist_robes', [
       'A A',
       'CQC',
       'CCC'
@@ -90,7 +93,7 @@ ServerEvents.recipes(event => {
       A: 'ars_nouveau:magebloom_block',
       C: 'ars_nouveau:wilden_tribute',
       Q: CORE_ARCANE
-    }).id('kubejs:magic/archmage_robes')
+    }).id('kubejs:magic/arcanist_robes')
   }
 
   // --- Mystical Agriculture: Master Infusion Crystal -----------------------
@@ -105,6 +108,14 @@ ServerEvents.recipes(event => {
       C: 'mysticalagriculture:supremium_ingot',
       Q: CORE_ARCANE
     }).id('kubejs:magic/master_infusion_crystal')
+
+    if (Item.exists('mysticalagriculture:imperium_farmland')) {
+      event.remove({ output: 'mysticalagriculture:imperium_farmland' })
+      event.shapeless('mysticalagriculture:imperium_farmland', [
+        'mysticalagriculture:imperium_essence',
+        'minecraft:farmland',
+        MATRIX_BIO
+      ]).id('kubejs:magic/imperium_farmland')
+    }
   }
 })
-
