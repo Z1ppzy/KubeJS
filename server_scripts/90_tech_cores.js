@@ -97,11 +97,12 @@ ServerEvents.recipes(event => {
     'QMQ',
     'ATA'
   ], {
-    A: 'mekanism:atomic_alloy',
+    A: 'mekanism:alloy_atomic',
     T: 'mekanism:teleportation_core',
     Q: quantumCircuit,
     M: CORE_II
   }).id('kubejs:cores/quantum_core')
+
 
   // --- Магический тир: Ars Nouveau + Occultism + Mystical Agriculture -------
   const arcaneGem = Platform.isLoaded('ars_nouveau') ? 'ars_nouveau:source_gem_block' : 'minecraft:amethyst_block'
